@@ -21,7 +21,8 @@ export default function ChatContainer({ currentChat, socket }) {
     //   from: data._id,
     //   to: currentChat._id,
     // });
-     const response = await fetch('http://localhost:5000/api/message/getmsg/', {
+     const response = await fetch('http://localhost:5000/api/message/getmsg/',
+       {
          method: "POST",
          headers: {"Content-Type": "application/json"},
             body: JSON.stringify({   
@@ -29,9 +30,11 @@ export default function ChatContainer({ currentChat, socket }) {
        to: currentChat._id,
             }),
       
-    })
-    setMessages(response.data);
+    }).then(response => response.json())
+    //console.log("response from get msg" , response)
+    setMessages(response);
   }
+  
   useEffect(()=>{
     xyz()
   }, [currentChat]);
@@ -48,7 +51,6 @@ export default function ChatContainer({ currentChat, socket }) {
   }, [currentChat]);
 
   const handleSendMsg = async (msg) => {
-
     console.log("your msg " , msg)
     const data = await JSON.parse(
       localStorage.getItem(import.meta.env.VITE_REACT_APP_LOCALHOST_KEY)
@@ -75,8 +77,6 @@ export default function ChatContainer({ currentChat, socket }) {
             }),
       
     })
-
-
     const msgs = [...messages];
     msgs.push({ fromSelf: true, message: msg });
     setMessages(msgs);
@@ -93,9 +93,9 @@ export default function ChatContainer({ currentChat, socket }) {
   }, []);
 
  
-  // useEffect(() => {
-  //   arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-  // }, [arrivalMessage]);
+  useEffect(() => {
+    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -118,7 +118,9 @@ export default function ChatContainer({ currentChat, socket }) {
         <Logout />
       </div>
        <div className="chat-messages">
-        {messages.map((message) => {
+       <h1>you get messege</h1>
+         {messages.map((message) => {
+          
           return (
             <div ref={scrollRef} key={uuidv4()}>
               <div
@@ -132,7 +134,7 @@ export default function ChatContainer({ currentChat, socket }) {
               </div>
             </div>
           );
-        })}
+        })} 
       </div> 
       <ChatInput handleSendMsg={handleSendMsg} />
     </Container>
